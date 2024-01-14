@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { DataContext } from "../contexts/DataContext";
+import { baseUrl } from "../config/config";
+import axios from "axios";
 
 const EditDrawer = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -7,14 +9,15 @@ const EditDrawer = () => {
   const {
     editDrawer,
     toggleEditDrawer,
-    editCourse: { id, title, short_name, fee },updateCourse
+    editCourse: { id, title, short_name, fee },
+    updateCourse,
   } = useContext(DataContext);
 
   const titleRef = useRef();
   const short_nameRef = useRef();
   const feeRef = useRef();
   const idRef = useRef();
-  const closeRef=useRef();
+  const closeRef = useRef();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -27,28 +30,37 @@ const EditDrawer = () => {
 
     setIsLoading(true);
 
-    const res = await fetch("http://localhost:5173/api/courses/" + id, {
-      method: "PUT",
-      headers: new Headers({ "Content-Type": "application/json" }),
-      body: JSON.stringify(newCourse),
-    });
+    // const res = await fetch(baseUrl + "/courses/" + id, {
+    //   method: "PUT",
+    //   headers: new Headers({ "Content-Type": "application/json" }),
+    //   body: JSON.stringify(newCourse),
+    // });
 
-    const json = await res.json();
+    // const json = await res.json();
 
-    updateCourse(json);
+    const res = await axios.put(
+      baseUrl + "/courses/" + id,
+      JSON.stringify(newCourse),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    updateCourse(res.data);
 
     setIsLoading(false);
-    
-    if(closeRef.current.checked){
-      toggleEditDrawer()
+
+    if (closeRef.current.checked) {
+      toggleEditDrawer();
     }
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     console.log("edit drawer work");
 
     titleRef.current.value = title;
-    short_nameRef.current.value= short_name;
+    short_nameRef.current.value = short_name;
     feeRef.current.value = fee;
     idRef.current.value = id;
   }, []);
@@ -167,12 +179,11 @@ const EditDrawer = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <input
-            ref={closeRef}
+              ref={closeRef}
               id="edit-default-checkbox"
               type="checkbox"
               defaultValue
               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-              
             />
             <label
               htmlFor="edit-default-checkbox"

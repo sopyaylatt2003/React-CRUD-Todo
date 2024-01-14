@@ -1,5 +1,7 @@
 import React, { useContext, useState } from "react";
 import { DataContext } from "../contexts/DataContext";
+import { baseUrl } from "../config/config";
+import axios from "axios";
 
 const RowEditBtn = ({ id }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -8,13 +10,13 @@ const RowEditBtn = ({ id }) => {
 
   const handleBtn = async () => {
     setIsLoading(true);
-    const res = await fetch("http://localhost:5173/api/courses/" + id);
-    const json = await res.json();
+    const res = await axios.get(baseUrl + "/courses/" + id);
+    // const json = await res.json();
 
-    setEditCourse(json);
+    setEditCourse(res.data);
 
     toggleEditDrawer();
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   return (

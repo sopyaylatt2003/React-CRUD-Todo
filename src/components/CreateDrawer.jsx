@@ -1,5 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import { DataContext } from "../contexts/DataContext";
+import { baseUrl } from "../config/config";
+import axios from "axios";
 
 const CreateDrawer = () => {
   const { createDrawer, toggleCreateDrawer, addCourse } =
@@ -21,14 +23,25 @@ const CreateDrawer = () => {
     // console.log(newCourse);
     setIsLoading(true);
 
-    const res = await fetch("http://localhost:5173/api/courses", {
-      method: "POST",
-      headers: new Headers({ "Content-Type": "application/json" }),
-      body: JSON.stringify(newCourse),
-    });
+    // const res = await fetch(baseUrl + "/courses", {
+    //   method: "POST",
+    //   headers: new Headers({ "Content-Type": "application/json" }),
+    //   body: JSON.stringify(newCourse),
+    // });
 
-    const json = await res.json();
-    addCourse(json);
+    // const json = await res.json();
+
+    const res = await axios.post(
+      baseUrl + "/courses/",
+      JSON.stringify(newCourse),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    addCourse(res.data);
     setIsLoading(false);
 
     if (formData.get("close")) {
